@@ -1,0 +1,56 @@
+# ============================================================================
+# Subflow : LOGIN (Android)
+# Dipakai : TC-01 (langsung), TC-02 & TC-03 (sebagai precondition)
+# Elemen   : dipetakan dari device via `maestro hierarchy`
+# Catatan  : path runFlow RELATIF terhadap file flow yang memanggil.
+#
+# PELAJARAN (2 strategi yang sudah dicoba & gagal):
+#   1. `below: {text: "Password"}` -> selector relatif malah memilih elemen
+#      jauh di bawah (tombol nav Recents) -> layar pindah ke task switcher.
+#   2. Tanpa tutup keyboard, anchor "Password" bisa salah sasaran karena teks
+#      "Password" juga muncul di suggestion strip keyboard.
+#   -> Solusi: tutup keyboard dulu (layout jadi deterministik), lalu tap pakai
+#      point persen yang tetap: field password ada di tengah (50%) / 61% tinggi.
+# ============================================================================
+appId: com.stc.tms.stg.planner
+env:
+  LOGIN_EMAIL: ${LOGIN_EMAIL || "om@gmail.com"}
+  LOGIN_PASSWORD: ${LOGIN_PASSWORD || "Password123!"}
+---
+# --- Test case: "1. Enter the data and click sign in" ------------------------
+
+- tapOn:
+    text: "Enter your email"
+    label: 'Klik field email'
+- inputText:
+    text: ${LOGIN_EMAIL}
+    label: 'Isi email = om@gmail.com'
+    # label bikin isi field tidak tampil di log/report/recording
+
+# Tutup keyboard -> layout form kembali ke posisi penuh & stabil
+- hideKeyboard
+- waitForAnimationToEnd
+
+# Field password: tanpa teks (cuma hint dots) & resource-id kosong.
+# Posisi tetap pada device ini: bounds [680,697][1240,769] -> tengah 50%, 61%
+- tapOn:
+    point: "50%, 61%"
+    label: 'Klik field password (titik tengah field)'
+
+# Guard: pastikan email tidak tertimpa / layar tidak pindah halaman
+- assertVisible:
+    text: "om@gmail.com"
+    label: 'Email masih terisi benar setelah pindah field'
+
+- inputText:
+    text: ${LOGIN_PASSWORD}
+    label: 'Isi password = Password123!'
+
+# Setelah inputText, keyboard terbuka lagi dan menutupi tombol "Sign in"
+# (form ikut bergeser ke atas) -> tutup keyboard dulu, baru klik tombolnya.
+- hideKeyboard
+- waitForAnimationToEnd
+
+- tapOn:
+    text: "Sign in"
+    label: 'Klik tombol Sign in'

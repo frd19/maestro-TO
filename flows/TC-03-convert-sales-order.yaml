@@ -1,0 +1,102 @@
+# ============================================================================
+# TC ID        : Test-03  *** OPSIONAL / DRAFT ***
+# Module       : TO / Convert sales order
+# Role         : Planner
+# Precondition : User already login
+# Expected     : Success to create TO
+# Source CSV   : testcases/TO Small scope - Appium - FUNCTIONAL.csv
+# ============================================================================
+# STATUS: DRAFT - langkahnya sudah diterjemahkan dari CSV, tetapi BELUM
+#         diverifikasi ke aplikasi (selector bertanda TODO).
+#         Jalankan khusus: maestro test flows/TC-03-convert-sales-order.yaml
+# Target : Android app (tablet Samsung RRGL707WSTA), bukan web -> tidak ada css
+# ============================================================================
+appId: com.stc.tms.stg.planner
+env:
+  LOGIN_EMAIL: ${LOGIN_EMAIL || "om@gmail.com"}
+  LOGIN_PASSWORD: ${LOGIN_PASSWORD || "Password123!"}
+
+  # Data pembuatan route (dari kolom Test Data)
+  ROUTE_REST_TIME: "30"
+  ROUTE_LOAD_UNLOAD: "30"
+  ROUTE_FUEL_SURCHARGE: "0,1"
+tags:
+  - functional
+  - tc03
+  - optional
+---
+- launchApp
+
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      LOGIN_EMAIL: ${LOGIN_EMAIL}
+      LOGIN_PASSWORD: ${LOGIN_PASSWORD}
+
+# 1. Navigate to transport order
+- tapOn:
+    text: "Transport Order"
+    label: '1. Navigate to transport order'
+
+# 2. Convert sales order
+- tapOn:
+    text: "(?i).*convert sales order.*"
+    label: '2. Click convert sales order'
+
+# 3. Klik SO paling atas
+- tapOn:
+    text: "(?i).*SO-.*"
+    label: '3. Klik SO paling atas'
+    index: 0
+
+# 4. Klik tombol Create
+- tapOn:
+    text: "(?i)^create$"
+    label: '4. Click create button'
+
+# 5. Route: pakai route yang compatible, atau create route baru bila belum ada
+- tapOn:
+    text: "(?i).*create new route.*"
+    label: '5. Create new route (bila belum ada route)'
+    optional: true
+
+# 6. Isi data route
+# TODO: selector field di bawah belum diverifikasi -> Maestro Studio
+- tapOn:
+    css: '[data-testid="field-rest-time"]'
+    label: '6. Buka field Rest Time'
+    optional: true
+- inputText:
+    text: ${ROUTE_REST_TIME}
+    label: '6. Isi rest time = 30'
+    optional: true
+
+- tapOn:
+    css: '[data-testid="field-load-unload"]'
+    label: '6. Buka field Load Unload'
+    optional: true
+- inputText:
+    text: ${ROUTE_LOAD_UNLOAD}
+    label: '6. Isi load unload = 30'
+    optional: true
+
+- tapOn:
+    css: '[data-testid="field-fuel-surcharge"]'
+    label: '6. Buka field Fuel Surcharge'
+    optional: true
+- inputText:
+    text: ${ROUTE_FUEL_SURCHARGE}
+    label: '6. Isi fuel surcharge = 0,1'
+    optional: true
+
+# average speed : let it on default (tanpa interaksi)
+
+- tapOn:
+    text: "(?i).*submit.*"
+    label: '6. Klik tombol submit'
+    optional: true
+
+# Expected result: Success to create TO
+- assertVisible:
+    text: "(?i).*(success|created successfully).*"
+    label: 'Success to create TO'

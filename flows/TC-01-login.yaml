@@ -1,0 +1,56 @@
+# ============================================================================
+# TC ID        : Test-01
+# Module       : TO / Login
+# Role         : Planner
+# Precondition : System able to access          -> launchApp clearState (state bersih)
+# Test Data    : email om@gmail.com | password Password123!
+# Steps        : 1. Enter the data and click sign in
+# Expected     : Success to login
+# Status manual: PASSED
+# Status auto  : PASSED (07-Okt-2026, semua step COMPLETED, exit 0)
+# Source CSV   : testcases/TO Small scope - Appium - FUNCTIONAL.csv
+# ============================================================================
+# Target      : Android app (tablet Samsung, device RRGL707WSTA)
+# appId       : com.stc.tms.stg.planner (STG = environment SIT)
+# Jalankan    : maestro test flows/TC-01-login.yaml
+# ============================================================================
+appId: com.stc.tms.stg.planner
+env:
+  LOGIN_EMAIL: ${LOGIN_EMAIL || "om@gmail.com"}
+  LOGIN_PASSWORD: ${LOGIN_PASSWORD || "Password123!"}
+tags:
+  - functional
+  - smoke
+  - tc01
+---
+# --- Precondition: "System able to access" ----------------------------------
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible: "Log in to your account"
+    timeout: 30000
+    label: 'Halaman login muncul'
+
+# --- Steps: 1. Enter the data and click sign in -----------------------------
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      LOGIN_EMAIL: ${LOGIN_EMAIL}
+      LOGIN_PASSWORD: ${LOGIN_PASSWORD}
+
+# --- Expected result: "Success to login" ------------------------------------
+# Indikator POSITIF dari hasil pemetaan layar pascа-login (07-Okt-2026):
+#   sidebar Dashboard, user Rusli Junaidi (ruslijun@gmail.com), list "10 TO"
+- assertVisible:
+    text: "Dashboard"
+    label: 'Success to login - menu Dashboard sidebar tampil'
+
+- assertVisible:
+    text: "(?i).*ruslijun@gmail.*"
+    label: 'Success to login - user Rusli Junaidi tampil'
+
+# Verifikasi negatif: halaman login benar-benar hilang
+- assertNotVisible:
+    text: "Log in to your account"
+    label: 'Halaman login sudah tidak tampil'

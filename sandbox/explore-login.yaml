@@ -1,0 +1,11 @@
+# ============================================================================
+# SANDBOX / EXPLORATION - bukan test case.
+# Tujuan: reset state app ke kondisi awal (belum login) untuk memetakan
+#         layar login. Ini juga precondition Test-01: "System able to access".
+# Jalankan: maestro test sandbox/explore-login.yaml
+# ============================================================================
+appId: com.stc.tms.stg.planner
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd

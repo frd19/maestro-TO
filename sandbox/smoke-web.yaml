@@ -1,0 +1,12 @@
+# ============================================================================
+# SANDBOX / SMOKE TEST - bukan test case.
+# Tujuan: memastikan engine web Maestro (Chromium) dan interpolasi variabel
+#         pada header `url:` bekerja sebelum menulis test case sungguhan.
+# Jalankan: maestro test sandbox/smoke-web.yaml
+# ============================================================================
+url: ${BASE_URL || "https://example.com"}
+---
+- launchApp
+- assertVisible:
+    text: 'Example Domain'
+    label: 'Halaman Example Domain tampil'

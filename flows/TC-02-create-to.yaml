@@ -1,0 +1,273 @@
+# ============================================================================
+# TC ID        : Test-02
+# Module       : TO / Create new transport order
+# Role         : Planner
+# Precondition : User already login
+# Steps        : 1-6 (lihat kolom Steps di CSV)
+# Expected     : Success to create TO
+# Status manual: PASSED
+# Source CSV   : testcases/TO Small scope - Appium - FUNCTIONAL.csv
+# AC / TSD     : testcases/9. AC-TO-01 Create TO Revamp.md (test ID & validasi)
+# ============================================================================
+# CATATAN SELECTOR (WAJIB DIBACA):
+#   * Target: Android app di tablet (bukan web) -> TIDAK ADA css/data-testid.
+#     Selector memakai teks/accessibility + point, dipeta dari `maestro hierarchy`.
+#   * Langkah bertanda TODO BELUM DIVERIFIKASI ke aplikasi asli.
+#     Verifikasi pakai: sandbox/explore-create-to.yaml + `maestro hierarchy`
+#   * Kalau teks tombol di aplikasi beda, cukup ubah baris itu saja.
+# ============================================================================
+appId: com.stc.tms.stg.planner
+env:
+  # --- precondition: credentials ---
+  LOGIN_EMAIL: ${LOGIN_EMAIL || "om@gmail.com"}
+  LOGIN_PASSWORD: ${LOGIN_PASSWORD || "Password123!"}
+
+  # --- test data: Step 1 Basic Detail ---
+  TO_CUSTOMER: "PT QA"
+  # Koreksi urutan route (user): Sidoarjo sebagai Origin, Surabaya sebagai Destination
+  TO_ORIGIN_CITY: "Sidoarjo"
+  TO_DESTINATION_CITY: "Surabaya"
+  # Transport condition: default (tidak diubah sesuai test case)
+  TO_FLEET_TYPE: "BUP Freezer"
+
+  # --- test data: Step 2 Fleet & SLA ---
+  TO_PICKUP_LOCATION: "tirtamas coldstorindo"
+  TO_DROP_LOCATION: "Hokky buah citraland"
+  # B. Product Group
+  TO_PRODUCT_NAME: "Ayam"
+  TO_PRODUCT_QTY: "10"
+  TO_PRODUCT_UNIT: "Karung"
+  TO_PRODUCT_WEIGHT: "10"
+  TO_PRODUCT_TEMP: "-18"
+
+  # --- test data: Step 3 Route ---
+  TO_ROUTE_PICK: "RECOMMENDATION"
+tags:
+  - functional
+  - tc02
+  - create-to
+---
+- launchApp
+
+# Precondition: "User already login"
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      LOGIN_EMAIL: ${LOGIN_EMAIL}
+      LOGIN_PASSWORD: ${LOGIN_PASSWORD}
+
+# ============================================================================
+# STEP 1-3 : Navigate & buka form Create Transport Order
+# Verified  : probe 15:00-15:01 (dropdown menu & wizard terpetakan)
+# ============================================================================
+# 1. Navigate to transport order -> sidebar menu (teks "Transport Order" muncul
+#    3x: judul halaman, sidebar, tombol -> pakai posisi sidebar via point)
+- tapOn:
+    point: "10%, 28%"
+    label: '1. Navigate to transport order (sidebar)'
+
+- waitForAnimationToEnd
+
+# 2. Click transport order button -> tombol pojok kanan atas (Button)
+- tapOn:
+    point: "93%, 22%"
+    label: '2. Click transport order button (kanan atas)'
+
+- waitForAnimationToEnd
+
+# 3. Click create new transport order -> item dropdown
+- tapOn:
+    text: "Create new transport order"
+    label: '3. Click create new transport order'
+
+- waitForAnimationToEnd
+
+- assertVisible:
+    text: "Create Transport Order"
+    label: '3. Form Create Transport Order terbuka'
+
+# ============================================================================
+# STEP 4 : Basic Detail form (wizard Basic Detail)
+# ============================================================================
+# 4a. Customer : PT QA  (dropdown modal + search box "Search by customer name")
+- tapOn:
+    text: "Select Customer"
+    label: '4a. Buka field Customer'
+- waitForAnimationToEnd
+- inputText:
+    text: ${TO_CUSTOMER}
+    label: '4a. Ketik Customer = PT QA'
+- waitForAnimationToEnd
+- tapOn:
+    text: "(?i)^${TO_CUSTOMER}.*"
+    label: '4a. Pilih "PT QA" dari dropdown'
+- waitForAnimationToEnd
+- assertVisible:
+    text: "(?i).*PT QA.*"
+    label: '4a. Customer terpilih'
+
+# 4b. Order date : hari ini (default) - field "Select Date"
+# TODO: assert nilai date yang tampil = hari ini (format UI belum dipastikan)
+- assertVisible:
+    text: "Select Date"
+    label: '4b. Order date field tampil (default hari ini)'
+    optional: true
+
+# 4c. Route : Sidoarjo - Surabaya (Origin dulu, Destination kedua - sesuaikan
+#     urutan field di form; nilai per koreksi user: Sidoarjo dulu, baru Surabaya)
+- tapOn:
+    text: "Origin City"
+    label: '4c. Buka field Origin City'
+- waitForAnimationToEnd
+- tapOn:
+    text: "Search by city"
+    label: '4c. Fokus search box kota'
+- inputText:
+    text: ${TO_ORIGIN_CITY}
+    label: '4c. Ketik Origin = Sidoarjo'
+- waitForAnimationToEnd
+- tapOn:
+    text: "(?i).*${TO_ORIGIN_CITY},.*"
+    label: '4c. Pilih "Kabupaten Sidoarjo, ..." dari list'
+    # koma membedakan item list dari isi search box; list asli = "Kabupaten Sidoarjo, Jawa Timur"
+- waitForAnimationToEnd
+
+- tapOn:
+    text: "Destination City"
+    label: '4c. Buka field Destination City'
+- waitForAnimationToEnd
+- tapOn:
+    text: "Search by city"
+    label: '4c. Fokus search box kota'
+- inputText:
+    text: ${TO_DESTINATION_CITY}
+    label: '4c. Ketik Destination = Surabaya'
+- waitForAnimationToEnd
+- tapOn:
+    text: "(?i).*${TO_DESTINATION_CITY},.*"
+    label: '4c. Pilih "Surabaya, ..." dari list'
+- waitForAnimationToEnd
+
+# 4d. Transport condition : default (Frozen) -> tidak ada interaksi
+#     (lihat TSD 9.5: Frozen = suhu -22..-18 & otomatis menambah requirement Freezer)
+# TODO: field Transport condition belum terlihat di layar pertama - mungkin perlu
+#       scroll form atau ada di tab "Fleet and SLA". PERLU PROBE LAGI.
+
+# 4e. Fleet type : BUP Freezer
+# TODO: field Fleet type belum terlihat di layar pertama - PERLU PROBE LAGI
+#       (kemungkinan di bawah form yang di-scroll atau tab Fleet and SLA).
+
+# ============================================================================
+# STEP 5 : Fleet and S/A
+# ============================================================================
+# --- 5A. Route and SLA ------------------------------------------------------
+
+# Pick up location : tirtamas coldstorindo
+- tapOn:
+    css: '[data-testid="field-pickup-location"]'
+    label: '5A. Buka field Pick Up Location'
+- inputText:
+    text: ${TO_PICKUP_LOCATION}
+    label: '5A. Isi pick up = tirtamas coldstorindo'
+- tapOn:
+    text: "(?i).*tirtamas.*"
+    label: '5A. Pilih tirtamas coldstorindo dari dropdown'
+
+# Stand by time : jam sekarang + 1 jam  -> dihitung otomatis via JavaScript
+# TODO: bila field-nya date-time picker (bukan input teks), ganti strategi:
+#       klik picker-nya lalu pilih jam, bukan inputText
+- evalScript: ${output.standbyTime = (function () { var d = new Date(); d.setHours(d.getHours() + 1); var p = function (n) { return (n < 10 ? '0' : '') + n; }; return p(d.getHours()) + ':' + p(d.getMinutes()); })()}
+- tapOn:
+    css: '[data-testid="field-standby-time"]'
+    label: '5A. Buka field Stand by Time'
+- inputText:
+    text: ${output.standbyTime}
+    label: '5A. Isi stand by time = jam sekarang + 1 jam'
+
+# Drop point location : Hokky buah citraland
+- tapOn:
+    text: "(?i).*add drop.*"
+    label: '5A. Klik Add Drop Point (bila tersedia)'
+    optional: true   # drop point pertama kadang sudah tampil default
+- tapOn:
+    css: '[data-testid="field-drop-point-1"]'
+    label: '5A. Buka field Drop Point 1'
+- inputText:
+    text: ${TO_DROP_LOCATION}
+    label: '5A. Isi drop point = Hokky buah citraland'
+- tapOn:
+    text: "(?i).*hokky.*"
+    label: '5A. Pilih Hokky buah citraland dari dropdown'
+
+# --- 5B. Product Group ------------------------------------------------------
+- tapOn:
+    text: "(?i).*add product group.*"
+    label: '5B. Klik tombol Add Product Group'
+
+# TODO: test ID field product group belum ada di TSD -> verifikasi di Maestro
+#       Studio, lalu ganti selector bila berbeda.
+- tapOn:
+    css: '[data-testid="field-product-name"]'
+    label: '5B. Buka field Product Name'
+- inputText:
+    text: ${TO_PRODUCT_NAME}
+    label: '5B. Isi nama product = Ayam'
+
+- tapOn:
+    css: '[data-testid="field-product-qty"]'
+    label: '5B. Buka field Quantity'
+- inputText:
+    text: ${TO_PRODUCT_QTY}
+    label: '5B. Isi quantity = 10'
+
+- tapOn:
+    css: '[data-testid="field-product-weight"]'
+    label: '5B. Buka field Weight'
+- inputText:
+    text: ${TO_PRODUCT_WEIGHT}
+    label: '5B. Isi weight = 10 kg'
+
+- tapOn:
+    css: '[data-testid="field-product-temperature"]'
+    label: '5B. Buka field Temperature'
+- inputText:
+    text: ${TO_PRODUCT_TEMP}
+    label: '5B. Isi temperature = -18'
+# TSD 9.5: Frozen -> suhu harus -22 s/d -18 (validasi backend)
+
+- tapOn:
+    text: "(?i).*(save|add).*product.*"
+    label: '5B. Simpan product group'
+    optional: true   # bila langsung tersimpan tanpa tombol simpan
+
+# ============================================================================
+# STEP 6 : Route
+# ============================================================================
+- tapOn:
+    text: "(?i).*select route.*"
+    label: '6. Buka kandidat route'
+    # TODO: bila "Select Route" muncul di 2 tempat (menu & tombol konfirmasi),
+    #       pakai index: text + index: 0/1
+
+- tapOn:
+    text: ${TO_ROUTE_PICK}
+    label: '6. Pilih settle route RECOMMENDATION'
+
+- tapOn:
+    text: "Select Route"
+    label: '6. Klik tombol Select Route'
+
+# Submit (TSD 9.3: Select Route -> Route Preview -> Submit Create TO)
+# optional: bila submit otomatis setelah route dipilih
+- tapOn:
+    text: "(?i).*(submit|create).*"
+    label: 'Submit Create TO'
+    optional: true
+
+# ============================================================================
+# EXPECTED RESULT : "Success to create TO"
+# TODO: samakan dengan teks toast/sukses yang tampil di aplikasi.
+# ============================================================================
+- assertVisible:
+    text: "(?i).*(success|created successfully).*"
+    label: 'Success to create TO'

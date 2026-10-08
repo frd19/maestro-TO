@@ -1,0 +1,71 @@
+TMS SIT | 🔵 FUNCTIONAL ,,,,,,,,,,,,,,,,
+TMS Web Frontend | Environment: SIT/DEV | Roles: Admin,,,,,,,,,,,,,,,,
+"TOTAL: 3, 🟢 PASSED: 3, 🟢⚠️ PASSED W/ NOTES: 0, 🔴 REJECTED: 0, ⚪ NOT TESTED: 0, 🟠 PENDING: 0",,,,,,,,,,,,,,,,
+TC ID,Module,Sub-Module,Req Ref,Role,Precondition,Test Data,Steps,Expected Result,Actual Result,Validation Type,Category,Severity,Priority,Status,Defect ID,Notes / Risk
+Test-01,TO,Login,-,Planner,System able to access ,"email : om@gmail.com
+password : Password123!",1. Enter the data and click sign in ,Success to login ,Success to login ,,Fungtional ,High,High,PASSED,,
+Test-02,TO,Create new transport order,-,Planner,User already login,"1. Basic detail form :
+Customer : PT QA
+Order date : adjust today 
+Route : Surabaya - Sidoarjo 
+Transport condition : default 
+Fleet type : BUP Freezer 
+2. Fleet and S;A
+A. Route and SLA
+pick up location : tirtamas coldstorindo 
+stand by time : that time hours + 1 hour 
+Drop point location : Hokky buah citraland 
+B. Product Group 
+click add product gorup 
+name : Ayam 
+Quantity : 10 Karung 
+Weight : 10 kg 
+Temperature : -18
+3. Route 
+Select route 
+select settle route ""RECOMENDATION"" 
+click Select Route button ","1. Navigate to transport order
+2. Click transport order button 
+3. Click create new transport order 
+4. Basic detail form :
+Customer : PT QA
+Order date : adjust today 
+Route : Surabaya - Sidoarjo 
+Transport condition : default 
+Fleet type : BUP Freezer 
+5. Fleet and S;A
+A. Route and SLA
+pick up location : tirtamas coldstorindo 
+stand by time : that time hours + 1 hour 
+Drop point location : Hokky buah citraland 
+B. Product Group 
+click add product gorup 
+name : Ayam 
+Quantity : 10 Karung 
+Weight : 10 kg 
+Temperature : -18
+6. Route 
+Select route 
+select settle route ""RECOMENDATION"" 
+click Select Route button ",Success to create TO ,Success to create TO ,,Fungtional,High,High,PASSED,,
+Test-03,TO,Convert sales order ,-,Planner,User already login,"f create route fill these field 
+rest time : 30
+rest time : 30
+load unload : 30
+fuel surchage : 0,1
+average speed let it on default 
+click submit button ","1. Navigate to transport order 
+2. Click transport order button 
+3. Convert sales ordder 
+4. Click any so (one top so)
+5. Click create button 
+6. if there is no route click create new route, but if there compatibble route click the roucte and select roucte 
+6. if create route fill these field 
+rest time : 30
+rest time : 30
+load unload : 30
+fuel surchage : 0,1
+average speed let it on default 
+click submit button 
+success to create 
+ ",Success to create TO ,Success to create TO ,,Fungtional,High,High,PASSED,,

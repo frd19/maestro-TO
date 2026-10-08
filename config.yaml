@@ -1,0 +1,23 @@
+# ============================================================================
+# Maestro Workspace Config - TMS Web Frontend Automation (SIT)
+# Lokasi : root workspace
+# Dibaca : otomatis saat menjalankan `maestro test .`
+# Dok    : https://docs.maestro.dev/reference/workspace-configuration
+# ============================================================================
+
+# Test discovery - hanya folder `flows/` yang dianggap test case.
+# `subflows/` sengaja diletakkan DI LUAR flows/ supaya tidak ikut
+# dieksekusi sebagai test saat suite dijalankan.
+flows:
+  - 'flows/**'
+
+# Urutan eksekusi ketika seluruh suite dijalankan sekaligus (`maestro test .`)
+executionOrder:
+  continueOnFailure: true          # TC-03 opsional -> jangan hentikan suite
+  flowsOrder:
+    - TC-01-login
+    - TC-02-create-to
+    - TC-03-convert-sales-order
+
+# Folder artefak: log, screenshot, video, hierarchy dump setiap run
+testOutputDir: test_output

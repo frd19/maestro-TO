@@ -1,0 +1,7 @@
+# Artefak run Maestro
+test_output/
+.maestro/tests/
+
+# OS / editor
+.DS_Store
+Thumbs.db

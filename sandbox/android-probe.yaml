@@ -1,0 +1,17 @@
+# ============================================================================
+# SANDBOX / PROBE - bukan test case.
+# Tujuan: memastikan Maestro bisa membaca & menemukan elemen app hybrid
+#         (com.stc.tms.stg.planner) lewat accessibilityText.
+# Jalankan: maestro test sandbox/android-probe.yaml
+# ============================================================================
+appId: com.stc.tms.stg.planner
+---
+- assertVisible:
+    text: "Transport Order Detail"
+    label: 'Terbaca: panel Transport Order Detail'
+- assertVisible:
+    text: "Overview"
+    label: 'Terbaca: tab Overview'
+- assertVisible:
+    text: ".*SO-\\d+.*"
+    label: 'Terbaca: nomor SO di list (regex)'

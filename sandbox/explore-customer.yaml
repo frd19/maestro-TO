@@ -1,0 +1,45 @@
+# ============================================================================
+# Sandbox : probe isi Origin City = Surabaya, Destination = Sidoarjo
+# State   : dropdown Origin City terbuka (search box "Search by city")
+# Jalankan: maestro test sandbox/explore-customer.yaml
+# ============================================================================
+appId: com.stc.tms.stg.planner
+---
+# --- Origin: Surabaya --------------------------------------------------------
+- tapOn:
+    text: "Search by city"
+    label: 'Fokus search box kota'
+- inputText:
+    text: "Surabaya"
+    label: 'Ketik Surabaya'
+- waitForAnimationToEnd
+- tapOn:
+    text: "(?i).*Surabaya,.*"
+    label: 'Pilih Surabaya dari list'
+    # catatan: format list = "Surabaya, Jawa Timur"; regex butuh koma supaya
+    #           TIDAK match juga ke isi search box ("Surabaya" tanpa koma)
+- waitForAnimationToEnd
+- assertVisible:
+    text: "(?i).*Surabaya.*"
+    label: 'Origin terisi Surabaya'
+
+# --- Destination: Sidoarjo ---------------------------------------------------
+- tapOn:
+    text: "Destination City"
+    label: 'Buka dropdown Destination City'
+- waitForAnimationToEnd
+- tapOn:
+    text: "Search by city"
+    label: 'Fokus search box kota'
+- inputText:
+    text: "Sidoarjo"
+    label: 'Ketik Sidoarjo'
+- waitForAnimationToEnd
+- tapOn:
+    text: "(?i).*Sidoarjo,.*"
+    label: 'Pilih Sidoarjo dari list'
+    # format list = "Sidoarjo, Jawa Timur" -> koma membedakan dari search box
+- waitForAnimationToEnd
+- assertVisible:
+    text: "(?i).*Sidoarjo.*"
+    label: 'Destination terisi Sidoarjo'

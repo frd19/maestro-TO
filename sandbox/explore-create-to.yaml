@@ -1,0 +1,32 @@
+# ============================================================================
+# Sandbox : probe membuka form Create Transport Order (untuk TC-02)
+# Tujuan  : klik tombol "Transport Order" (kanan atas, android.widget.Button)
+#           lalu petakan layar berikutnya -> cari "Create new transport order"
+# Jalankan: maestro test sandbox/explore-create-to.yaml
+#
+# Catatan : launchApp TANPA clearState -> sesi login TETAP tersimpan
+#           (terbukti dari run 14:57 - halaman login tidak muncul lagi),
+#           jadi probe ini tidak perlu login ulang.
+# ============================================================================
+appId: com.stc.tms.stg.planner
+---
+- launchApp
+- waitForAnimationToEnd
+
+# Tombol "Transport Order" (Button) di pojok kanan atas: bounds [1677,237][1896,297]
+# -> center (1786, 267) pada layar 1920x1200 = "93%, 22%"
+#    (pakai point dulu karena teks "Transport Order" muncul 3x di layar: judul,
+#     sidebar, dan tombol ini -> selector teks akan ambigu)
+- tapOn:
+    point: "93%, 22%"
+    label: 'Klik tombol Transport Order (kanan atas)'
+
+- waitForAnimationToEnd
+
+# Dropdown terbuka berisi: "Create new transport order" + "Convert sales order"
+# (hasil probe 15:00 - inilah langkah 2 & 3 test case)
+- tapOn:
+    text: "Create new transport order"
+    label: 'Klik Create new transport order'
+
+- waitForAnimationToEnd
